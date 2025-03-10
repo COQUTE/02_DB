@@ -160,3 +160,172 @@ SELECT EMP_NAME, HIRE_DATE
 FROM EMPLOYEE
 WHERE HIRE_DATE BETWEEN '1990-01-01' AND '1999-12-31';
 
+------------------------------------------------------------------
+
+-- LIKE : 비교하려는 값이 특정한 패턴을 만족시키면 조회하는 연산자
+-- [작성법]
+-- WHERE 컬럼명 LIKE '패턴이 적용된 값';
+
+-- LIKE의 패턴을 나타내는 문자
+-- '%' : 포함
+-- '_' : 글자수
+
+-- '%' 예시
+-- 'A%' : A로 시작하는 문자열
+-- '%A' : A로 끝나는 문자열
+-- '%A%' : A를 포함하는 문자열
+
+-- '_' 예시
+-- 'A_' : A로 시작하는 두글자 문자열
+-- '____A' (언터바 4개) : A로 끝나는 다섯글자 문자열
+-- '__A__' : 세번째 문자가 A인 다섯글자 문자열
+-- '_____' : 다섯글자 문자열
+
+-- EMPLOYEE 테이블에서 (FROM 절)
+-- 성이 '전'씨인 (WHERE 절)
+-- 사원의 사번, 이름 조회 (SELECT 절)
+SELECT EMP_ID, EMP_NAME
+FROM EMPLOYEE
+WHERE EMP_NAME LIKE '전%';
+
+-- EMPLOYEE 테이블에서 전화번호가 010으로 시작하지 않는 사원
+-- 사번, 이름, 전화번호 조회
+SELECT EMP_ID, EMP_NAME, PHONE
+FROM EMPLOYEE
+WHERE PHONE NOT LIKE '010%';
+
+-- EMPLOYEE 테이블에서 EMAIL의 _앞에 글자가 세글자인 사원만
+-- 이름, 이메일 조회
+SELECT * FROM EMPLOYEE;
+-- sun_di@or.kr
+-- song_jk@or.kr
+SELECT EMP_NAME, EMAIL
+FROM EMPLOYEE
+WHERE EMAIL LIKE '____%';
+
+-- ESCAPE 문자
+-- ESCAPE 문자 뒤에 작성된_는 일반문자로 탈출한다는 뜻
+-- #, ^
+SELECT EMP_NAME, EMAIL
+FROM EMPLOYEE
+WHERE EMAIL LIKE '___#_%' ESCAPE '#';
+
+----------------------------------------------------------------------------
+
+-- 연습문제
+
+-- EMPLOYEE 테이블에서
+-- 이메일 '_'앞이 4글자이면서
+-- 부서코드가 'D9' 또는 'D6'이고  --> AND가 OR보다 우선순위 높다, () 사용가능
+-- 입사일이 1990-01-01 ~ 2000-12-31 이고
+-- 급여가 270만원 이상인 사원의
+-- 사번, 이름, 이메일, 부서코드, 입사일, 급여 조회
+SELECT EMP_ID, EMP_NAME, EMAIL, DEPT_CODE, HIRE_DATE, SALARY
+FROM EMPLOYEE
+WHERE EMAIL LIKE '____#_%' ESCAPE '#'
+	AND DEPT_CODE IN ('D6', 'D8')
+	AND HIRE_DATE BETWEEN '1990-01-01' AND '2000-12-31'
+	AND SALARY >= 2700000;
+
+-- 'J2' 또는 'J7' 직급 코드 중 급여를 2000000보다 많이 받는 직원의 이름, 급여, 직급코드 조회
+SELECT EMP_NAME, SALARY, JOB_CODE
+FROM EMPLOYEE
+WHERE JOB_CODE IN ('J2', 'J7')
+	AND SALARY > 2000000;
+
+-- 연산자 우선순위
+
+/*
+ * 1. 산술 연산자( + - * /)
+ * 2. 연결 연산자( || )
+ * 3. 비교 연산자( > < >= <= = != <>)
+ * 4. IS NULL / IS NOT NULL, LIKE, IN / NOT IN
+ * 5. BETWEEN AND / NOT BETWEEN AND
+ * 6. NOT (논리 연산자)
+ * 7. AND
+ * 8. OR
+ */
+
+-----------------------------------------------------
+
+/*
+ * IN 연산자
+ * 
+ * 비교하려는 값과 목록에 작성된 값 중
+ * 일치하는 것이 있으면 조회하는 연산자
+ * 
+ * [작성법]
+ * WHERE 컬럼명 IN(값1, 값2, 값3 ...)
+ * 
+ * WHERE 컬럼명 = '값1'
+ * 		OR 컬럼명 = '값2'
+ * 		OR 컬럼명 = '값3';
+ * */
+
+-- EMPLOYEE 테이블에서
+-- 부서코드가 D1, D6, D9인 사원의
+-- 사번, 이름, 부서코드 조회
+SELECT EMP_ID, EMP_NAME, DEPT_CODE
+FROM EMPLOYEE
+WHERE DEPT_CODE IN ('D1', 'D6', 'D9'); -- 9명
+
+-- NOT IN
+SELECT EMP_ID, EMP_NAME, DEPT_CODE
+FROM EMPLOYEE
+WHERE DEPT_CODE NOT IN ('D1', 'D6', 'D9') -- 12명(NULL 미포함)
+OR DEPT_CODE IS NULL; -- 부서코드가 없는(NULL) 2명 포함 14명 조회
+
+---------------------------------------------------
+
+/*
+ * NULL 처리 연산자
+ * 
+ * JAVA에서 NULL	: 참조하는 객체가 없음을 의미
+ * DB에서 NULL		: 컬럼에 값이 없음을 의미
+ * 
+ */
+
+-- EMPLOYEE 테이블에서 보너스가 있는 사원의 이름, 보너스 조회
+SELECT EMP_NAME, BONUS
+FROM EMPLOYEE
+WHERE BONUS IS NOT NULL; -- 9행
+
+-- EMPLOYEE 테이블에서 보너스가 없는 사원의 이름, 보너스 조회
+SELECT EMP_NAME, BONUS
+FROM EMPLOYEE
+WHERE BONUS IS NULL; -- 14행
+
+/* ORDER BY 절
+ * 
+ * - SELECT문의 조회 결과(RESULT SET)를 정렬할 때 사용하는 구문
+ * ** SELECT문 해석 시 가장 마지막에 해석된다!!! **
+ * 
+ */
+
+-- EMPLOYEE 테이블 (FROM 절)
+-- 급여 오름 차순으로 (ORDER BY 절)
+-- 사번, 이름, 급여 조회 (SELECT 절)
+SELECT EMP_ID, EMP_NAME, SALARY
+FROM EMPLOYEE
+ORDER BY SALARY; -- ASC(오름차순)가 기본값 [ASC | DESC]
+-- 컬럼명 사용.
+
+-- EMPLOYEE 테이블에서 (FROM 절)
+-- 급여가 200만 이상인 사원의 (WHERE 절)
+-- 사번, 이름, 급여 조회 (SELECT 절)
+-- 단, 급여 내림차순으로 조회 (ORDER BY 절)
+SELECT EMP_ID, EMP_NAME, SALARY
+FROM EMPLOYEE
+WHERE SALARY >= 2000000
+ORDER BY 3 DESC;
+
+-- 입사일 순서대로 이름, 입사일 조회 (별칭 사용)
+SELECT EMP_NAME AS 이름, HIRE_DATE AS 입사일
+FROM EMPLOYEE
+ORDER BY 입사일;
+
+/* 정렬 중첩 : 대분류 정렬 후 소분류 정렬 */
+-- 부서코드 오름차순 정렬 후 급여 내림차순 정렬
+SELECT EMP_NAME, DEPT_CODE, SALARY
+FROM EMPLOYEE
+ORDER BY DEPT_CODE, SALARY DESC;
