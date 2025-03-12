@@ -19,8 +19,9 @@ WHERE PROFESSOR_NAME IN ('조경숙', '김태봉', '박지평', '이무룡');
 -- 단 이때 나이가 적은 사람에서 많은 사람 순서로 화면에 출력되도록 만드시오.
 -- 단, 교수 중 2000년 이후 출생자는 없으며 출력 헤더는 "교수이름", "나이"로 한다. 나이는 '만'으로 계산한다.
 SELECT PROFESSOR_NAME AS 교수이름, 
-MONTHS_BETWEEN(SYSDATE, TO_DATE(SUBSTR('19' || PROFESSOR_SSN, 1, INSTR('19' || PROFESSOR_SSN, '-') - 1), 'YYYYMMDD')) / 12 AS 나이
+FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE(SUBSTR('19' || PROFESSOR_SSN, 1, INSTR('19' || PROFESSOR_SSN, '-') - 1), 'YYYYMMDD')) / 12) AS 나이
 FROM TB_PROFESSOR
+WHERE SUBSTR(PROFESSOR_SSN, 8, 1) = '1';
 ORDER BY 나이;
 
 -- 교수들의 이름 중 성을 제외한 이름만 출력하는 SQL 문장을 작성하시오.
@@ -35,7 +36,7 @@ FROM TB_STUDENT;
 -- 이때, 19살에 입학하면 재수를 하지 않은 것으로 간주한다.
 SELECT STUDENT_NO, STUDENT_NAME
 FROM TB_STUDENT
-WHERE MONTHS_BETWEEN(ENTRANCE_DATE, TO_DATE(SUBSTR('19' || STUDENT_SSN, 1, INSTR('19' || STUDENT_SSN, '-') - 1), 'YYYYMMDD')) / 12 > 19;
+WHERE CEIL(MONTHS_BETWEEN(ENTRANCE_DATE, TO_DATE(SUBSTR('19' || STUDENT_SSN, 1, INSTR('19' || STUDENT_SSN, '-') - 1), 'YYYYMMDD')) / 12) > 19;
 
 -- 2020년 크리스마스는 무슨 요일인가?
 SELECT NEXT_DAY('20201218', '금') FROM DUAL;
