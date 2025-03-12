@@ -434,6 +434,35 @@ WHERE (DEPT_CODE, MANAGER_ID) = (SELECT DEPT_CODE, MANAGER_ID
 																 WHERE SUBSTR(EMP_NO, 1, 2) = '77'
 																 AND SUBSTR(EMP_NO, 8, 1) = '2');
 
+------------------------------------------------------------------------------
+
+-- 4. 다중행 다중열 서브쿼리
+-- 서브쿼리 조회 결과 행 수와 열 수가 여러개 일 때
+
+-- 본인이 소속된 직급의 평균 급여를 받고있는 직원의
+-- 사번, 이름, 직급코드, 급여 조회
+-- 단, 급여와 급여 평균은 만원단위로 조회 TRUNC(컬럼명, -4)
+
+-- 1) 직급별 평균 급여 (서브쿼리)
+SELECT JOB_CODE, TRUNC(AVG(SALARY), -4)
+FROM EMPLOYEE
+GROUP BY JOB_CODE;
+
+-- 2) 사번, 이름, 직급코드, 급여 조회 (메인쿼리 + 서브쿼리)
+SELECT EMP_ID, EMP_NAME, JOB_CODE, SALARY
+FROM EMPLOYEE
+WHERE (JOB_CODE, SALARY) IN (SELECT JOB_CODE, TRUNC(AVG(SALARY), -4)
+														 FROM EMPLOYEE
+														 GROUP BY JOB_CODE);
+
+------------------------------------------------------------------------------
+
+
+
+
+
+
+
 
 
 
