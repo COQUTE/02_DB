@@ -21,3 +21,11 @@ GRANT RESOURCE, CONNECT TO workbook;
 
 ALTER USER workbook DEFAULT TABLESPACE SYSTEM QUOTA UNLIMITED ON SYSTEM;
 -- 객체가 생성될 수 있는 공간 할당량 무제한 지정
+
+----------------------------------------------------------------
+
+CREATE USER kh_shop IDENTIFIED BY shop;
+
+GRANT RESOURCE, CONNECT TO kh_shop;
+
+ALTER USER kh_shop DEFAULT TABLESPACE SYSTEM QUOTA UNLIMITED ON SYSTEM;
